@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Search Bar</title>
+  </head>
+  <style>
+    body {
+      background-color: #85cff7;
+      font-family: 'Helvetica', 'Arial', sans-serif;
+    }
+    
+    .container {
+      width: 100%;
+      min-height: 100vh;
+      padding: 5%;
+      background-position: center;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .search_filter {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(255, 255, 255, 0.2);
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      border-radius: 60px;
+    }
+    
+    .search_filter input {
+      background: transparent;
+      outline: none;
+      flex: 1;
+      border: 0;
+      padding: 25px 20px;
+      font-size: 20px;
+    }
+    
+    .search_filter button {
+      background: transparent;
+      border: none;
+      padding: 0%;
+      width: 100px;
+      color: #ffffff;
+      text-align: center;
+      border-radius: 10px;
+      font-size: 20px;
+      cursor: pointer; 
+    }
+    
+    .search_filter select {
+      background: transparent;
+      border: none;
+      padding: 0%;
+      width: 100px;
+      text-align: center;
+      border-radius: 10px;
+      font-size: 20px;
+      cursor: pointer; 
+    }
+    
+    .autocomplete-list {
+      position: absolute;
+      z-index: 1;
+      top: calc(100% + 5px); 
+      left: 0;
+      min-width: calc(100% - 40px); 
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      background: #fff;
+      color: #333;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .autocomplete-list li {
+      padding: 0.5em;
+      cursor: pointer;
+    }
+    
+    .autocomplete-list li:hover {
+      background: #f2f2f2;
+    }
+    </style>
+  <body>
+    <div class='container'>
+      <form action="" class="search_filter">
+        <select name="drop-down" id="filter">
+          <option value="location" id="option_location">Location</option>
+          <option value="skill" id="option_skill">Skill</option>
+        </select>
+        <input type='text' placeholder="Search Skills or Location" name="search" id="search_data">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+    <script>
+      var loc = JSON.parse('{{ locations|safe }}');
+       var skill = JSON.parse('{{ skills|safe }}');
+       var availableSkill = [];
+       var availableLocation = [];
+       var allData = []
+        
+       var filterField = document.getElementById('filter');
+       var searchInput = document.getElementById('search_data');
+ 
+       filterField.addEventListener('change', function() {
+         var filterValue = filterField.value;
+ 
+         if (filterValue === 'location') {
+           availableLocation = loc.map(function(item) {
+             return item.fields.location;
+           });
+           searchInput.value = ''; 
+           autocompleteSetup(availableLocation);
+         } else if (filterValue === 'skill') {
+           availableSkill = skill.map(function(item) {
+             return item.fields.skill_name;
+           });
+           searchInput.value = ''; 
+           autocompleteSetup(availableSkill);
+         } else {
+ 
+         }
+       });
+ 
+     function autocompleteSetup(source) {
+     searchInput.addEventListener('input', function() {
+     var inputValue = this.value;
+     var matches = source.filter(function(item) {
+       return item.toLowerCase().startsWith(inputValue.toLowerCase());
+     });
+ 
+     if (matches.length > 0) {
+       var autocompleteList = document.createElement('ul');
+       autocompleteList.classList.add('autocomplete-list');
+ 
+       matches.forEach(function(match) {
+         var listItem = document.createElement('li');
+         listItem.textContent = match;
+         autocompleteList.appendChild(listItem);
+       });
+ 
+       removeExistingAutocomplete();
+ 
+       this.parentNode.appendChild(autocompleteList);
+ 
+       autocompleteList.addEventListener('click', function(e) {
+         if (e.target.tagName === 'LI') {
+           searchInput.value = e.target.textContent;
+           removeExistingAutocomplete();
+         }
+       });
+     } else {
+       removeExistingAutocomplete();
+     }
+   });
+ 
+   document.addEventListener('click', function(e) {
+     if (!searchInput.contains(e.target)) {
+       removeExistingAutocomplete();
+     }
+   });
+ 
+   function removeExistingAutocomplete() {
+     var existingAutocomplete = document.querySelector('.autocomplete-list');
+     if (existingAutocomplete) {
+       existingAutocomplete.remove();
+     }
+   }
+ }
+     </script>
+  </body>
+</html>

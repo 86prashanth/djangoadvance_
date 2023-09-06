@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>List of Cards</title>
+</head>
+<style>
+    body {
+        background-color: #eaeff1;
+        font-family: "Raleway", sans-serif;
+        display: flex;
+    }
+
+    #container {
+        max-width: 300px;
+        margin: 0 auto;
+        margin-top: 20vh;
+    }
+
+    #card-container {
+        margin-top: 20px;
+        background-color: white;
+        border: 1px solid #bacdd8;
+        padding: 8px;
+        border-radius: 12px;
+        padding: 16px 8px 8px 8px;
+    }
+
+    #img-data {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+
+    .tag {
+        padding: 4px 8px;
+        border: 1px solid #e5eaed;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #788697;
+    }
+
+    p {
+        font-size: 14px;
+        color: #7f8c9b;
+        line-height: 150%;
+        display: inline-block;
+        width: 250px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+        margin: 10px;
+    }
+
+    .filterContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: fit-content;
+        margin-top: 50px;
+    }
+
+    /* .filterOptns{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  } */
+    .chckBoxCont {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+        padding-left: 15px;
+    }
+
+    .chckBoxCont input {
+        padding-left: 15px;
+        width: fit-content;
+    }
+
+    #checkbox-filter {
+        padding-left: 15px;
+        width: fit-content;
+    }
+
+    .chip-area{
+       margin-top: 10px;
+    }
+</style>
+<body>
+    <div id="filterContainer" data-type="checkbox">
+
+    </div>
+
+    <script>
+        var countriesData = JSON.parse('{{ countries|safe }}');
+        var countriesList = JSON.parse('{{ countries_list|safe }}');
+        
+        var Container = document.createElement("div");
+        Container.id = "container";
+        document.body.appendChild(Container);
+
+        var filterContainer = document.getElementById("filterContainer");
+        const filterHeading = document.createElement("div");
+        filterHeading.classList.add("filterHeading");
+        filterContainer.appendChild(filterHeading);
+        const filterLabel = document.createElement("span");
+        filterLabel.classList.add("country-heading");
+        filterLabel.innerHTML = "Country Filter :";
+        filterHeading.appendChild(filterLabel);
+
+        countriesList.forEach(element => {
+            filterContent(element);
+         });
+
+        countriesData.forEach((element) => {
+            var CardContainer = document.createElement("div");
+            CardContainer.id = "card-container";
+            Container.appendChild(CardContainer);
+
+            var img = document.createElement("img");
+            img.src = `${element.fields.image_url}`;
+            img.id = "image-data";
+            CardContainer.appendChild(img);
+
+            var cardDetails = document.createElement("div");
+            cardDetails.id = "card-details";
+            CardContainer.appendChild(cardDetails);
+
+            var title = document.createElement("H2");
+            title.innerHTML = `${element.fields.country_name}`;
+            cardDetails.appendChild(title);
+
+            var popularCities = document.createElement("span");
+            popularCities.innerHTML = `Popular City: ${element.fields.popular_cities}`;
+            popularCities.className = "tag";
+            cardDetails.appendChild(popularCities);
+
+            var countryDescription = document.createElement("p");
+            var text = document.createTextNode(`${element.fields.country_description}`);
+            countryDescription.appendChild(text);
+            cardDetails.appendChild(countryDescription);
+
+            checkedFilterBox(element.fields.country_name);
+        });
+
+        function filterContent(element) {
+            const filterOption = document.createElement("div");
+            filterOption.classList.add("filterOptns");
+            filterContainer.appendChild(filterOption);
+
+            const checkboxCount = document.createElement("div");
+            checkboxCount.classList.add("chckBoxCont");
+            filterOption.appendChild(checkboxCount);
+
+            const inputType = document.createElement("INPUT");
+            inputType.id = "checkbox-filter";
+            inputType.className = `checkboxFilter-${element.fields.country_name}`;
+            inputType.setAttribute('type', 'checkbox');
+            checkboxCount.appendChild(inputType);
+
+            const checkboxLabel = document.createElement("p");
+            checkboxLabel.className = "country-name";
+            checkboxLabel.innerHTML = `${element.fields.country_name}`;
+
+            checkboxCount.appendChild(checkboxLabel);
+        }
+        
+        function checkedFilterBox(data){
+            var countrylabel = data;
+        
+        var getCheckboxFilter = document.getElementsByClassName(`checkboxFilter-${countrylabel}`);
+        getCheckboxFilter[0].checked=true;}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Chip Filter</title>
+</head>
+<style>
+    #container {
+      border: 3px solid #fff;
+      padding: 20px;
+    }
+  
+    .chip-area {
+      background-color: #d1d5db;
+      width: fit-content;
+      height: 80px;
+      display: flex;
+      box-sizing: border-box;
+      border-radius: 10px;
+      padding: 10px;
+      margin-right: 16px;
+      float: left;
+      transition: all 0.3s ease 0s;
+    }
+  
+    .txt {
+      justify-content: center;
+      align-items: center;
+      padding-left: 20px;
+    }
+  
+    .txt p {
+      justify-content: center;
+      align-items: center;
+      margin: 10px;
+      font-size: 30px;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      color: black;
+    }
+  
+    .chip-logo {
+      align-items: center;
+    }
+  
+    .chip-logo img {
+      max-width: 100%;
+      max-height: 100%;
+      padding: 2px;
+    }
+  
+    .chip-link {
+      align-items: center;
+      padding-left: 30px;
+    }
+  
+    .chip-link img {
+      max-width: 70%;
+      max-height: 70%;
+      padding: 10px;
+    }
+  
+    .chip-area:hover {
+      color: #494949 !important;
+      border-radius: 50px;
+      border-color: #494949 !important;
+    }
+  </style>
+<body>
+<div id="container">
+  </div>
+</body>
+<script>
+    var countriesList = JSON.parse('{{ countries|safe }}');
+
+    const mainArea = document.getElementById("container");
+    countriesList.forEach(element => {
+      chipFilter(element);
+    });
+
+    function chipFilter(element) {
+      chipId = element.fields.country_name;
+      console.log(chipId);
+
+      const chipAreaDiv = document.createElement("div");
+      chipAreaDiv.classList.add("chip-area");
+      mainArea.appendChild(chipAreaDiv);
+
+      const chipLogoDiv = document.createElement("div");
+      chipLogoDiv.classList.add("chip-logo");
+      chipAreaDiv.appendChild(chipLogoDiv);
+
+      const chipLogoImg = document.createElement("img");
+      chipLogoImg.src = `${element.fields.image_url}`;
+      chipLogoDiv.appendChild(chipLogoImg);
+
+      const txtDiv = document.createElement("div");
+      txtDiv.classList.add("txt");
+      chipAreaDiv.appendChild(txtDiv);
+
+      const pElement = document.createElement("p");
+      pElement.textContent = `${element.fields.country_name}`;
+      txtDiv.appendChild(pElement);
+
+      const chipLinkDiv = document.createElement("div");
+      chipLinkDiv.classList.add("chip-link");
+      chipAreaDiv.appendChild(chipLinkDiv);
+
+      const linkElement = document.createElement("a");
+      linkElement.id = "chipFilterLink";
+      linkElement.href = "{% url 'chip-filter' 0 %}".replace("0", chipId);
+      chipLinkDiv.appendChild(linkElement);
+      const linkImg = document.createElement("img");
+      linkImg.src = "https://imgtr.ee/images/2023/07/21/6cbc7bc38b2843f07ab2a66ffabc11c4.png";
+      linkElement.appendChild(linkImg);
+    }
+  </script>
+</html>
